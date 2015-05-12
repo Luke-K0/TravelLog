@@ -38,7 +38,6 @@ public class CurrentLocation extends FragmentActivity {
     }
 
     private void setUpMap() {
-        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker").snippet("Snippet"));
 
         // Enable MyLocation Layer of Google Map
         mMap.setMyLocationEnabled(true);
@@ -52,8 +51,10 @@ public class CurrentLocation extends FragmentActivity {
         // Get the name of the best provider
         String provider = locationManager.getBestProvider(criteria, true);
 
+        String provider2 = locationManager.NETWORK_PROVIDER;
+
         // Get Current Location
-        Location myLocation = locationManager.getLastKnownLocation(provider);
+        Location myLocation = locationManager.getLastKnownLocation(provider2);
 
         // set map type
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);

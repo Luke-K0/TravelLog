@@ -50,23 +50,14 @@ public class MainActivity extends ListActivity {
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
                                            final int pos, long id) {
 
-                //Toast temp_toast = Toast.makeText(getApplicationContext(), "Entry removed", Toast.LENGTH_SHORT);
-                //temp_toast.show();
-
-
-
                 AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(arg0.getContext());
-                dlgAlert.setMessage("Czy chcesz usunąć element?");
-                dlgAlert.setTitle("Potwierdź usunięcie");
+                dlgAlert.setMessage("Do you want to delete selected location?");
+                dlgAlert.setTitle("Delete entry");
                 dlgAlert.setPositiveButton("Ok",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                Toast komunikat = Toast.makeText(getApplicationContext(), "usunięto", Toast.LENGTH_SHORT);
+                                Toast komunikat = Toast.makeText(getApplicationContext(), "Entry deleted", Toast.LENGTH_SHORT);
                                 komunikat.show();
-
-                                //notyfikacja:
-                                //displayNotification();
-
 
                                 ArrayAdapter<Comment> adapter = (ArrayAdapter<Comment>) getListAdapter();
                                 Comment comment = null;
@@ -85,7 +76,7 @@ public class MainActivity extends ListActivity {
                             }
                         });
                 dlgAlert.setCancelable(true);
-                dlgAlert.setNegativeButton("Anuluj", null);
+                dlgAlert.setNegativeButton("Cancel", null);
                 dlgAlert.create().show();
 
                 return true;
@@ -95,7 +86,7 @@ public class MainActivity extends ListActivity {
         MainActivityLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast temp_toast = Toast.makeText(getApplicationContext(), "costam", Toast.LENGTH_SHORT);
+                Toast temp_toast = Toast.makeText(getApplicationContext(), "You were here", Toast.LENGTH_SHORT);
                 temp_toast.show();
 
                 Visited(null);
@@ -175,12 +166,11 @@ public class MainActivity extends ListActivity {
     public void Visited(View view) {
         Intent intent = new Intent(this, VisitedLocation.class);
         startActivity(intent);
-        //startActivityForResult(intent, ACTIVITY_CREATE);
+        // todo - pobieranie lokcaji z bazy danych i wyswietlanie jej na mapie
     }
 
     public void AddLocation(View view) {
         Intent intent = new Intent(this, CurrentLocation.class);
-        //startActivity(intent);
         startActivityForResult(intent, ACTIVITY_CREATE);
     }
 
