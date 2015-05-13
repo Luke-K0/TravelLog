@@ -43,6 +43,13 @@
                 android:value="com.s391377.travellog.MainActivity" />
         </activity>
         <activity
+            android:name=".Visited"
+            android:label="@string/title_activity_visited" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.s391377.travellog.MainActivity" />
+        </activity>
+        <activity
             android:name=".VisitedLocation"
             android:label="@string/title_activity_visited_location" >
             <meta-data

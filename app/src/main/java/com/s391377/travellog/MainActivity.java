@@ -1,5 +1,6 @@
 package com.s391377.travellog;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -33,29 +34,26 @@ public class MainActivity extends ListActivity {
 
         final ViewAnimator viewAnimator = (ViewAnimator) findViewById(R.id.viewAnimator1);
 
-        final List<Comment> values = datasource.getAllComments();
-        String one = values.toString();
-
-
-
-
-        Log.e(">>>>", "commentstring " + values);
-
-        values.remove(0);
-
-        Log.e(">>>>", "commentstring " + values);
-
-        //List<Comment> values2 = datasource.getAllLatitudes();
-
-        //Log.e(">>>>", "commentstring " + values2);
-
+        List<Comment> values = datasource.getAllComments();
         // use the SimpleCursorAdapter to show the
         // elements in a ListView
         ArrayAdapter<Comment> adapter = new ArrayAdapter<Comment>(this,
                 android.R.layout.simple_expandable_list_item_1, values);
+        //setListAdapter(adapter);
 
 
-        setListAdapter(adapter);
+
+
+        // Construct the data source
+        ArrayList<Comment> arrayOfComments = new ArrayList<Comment>(values);
+        // Create the adapter to convert the array to views
+        CommentsAdapter commentsAdapter = new CommentsAdapter(this, arrayOfComments);
+        // Attach the adapter to a ListView
+        //ListView listView = (ListView) findViewById(R.id.lvItems);
+        setListAdapter(commentsAdapter);
+
+
+        values.get(1).getDate();
 
         final ListView MainActivityLV = (ListView) findViewById(android.R.id.list);
 
@@ -66,7 +64,7 @@ public class MainActivity extends ListActivity {
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
                                            final int pos, long id) {
 
-                AlertDialog.Builder dlgAlert = new AlertDialog.Builder(arg0.getContext());
+                AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(arg0.getContext());
                 dlgAlert.setMessage("Do you want to delete selected location?");
                 dlgAlert.setTitle("Delete entry");
                 dlgAlert.setPositiveButton("Ok",
@@ -103,24 +101,10 @@ public class MainActivity extends ListActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast temp_toast = Toast.makeText(getApplicationContext(), "You were here", Toast.LENGTH_SHORT);
-
-                String selectedFromList =(MainActivityLV.getItemAtPosition(position).toString());
-
-                Log.e(">>>>", "selectedFromList " + selectedFromList);
-
                 temp_toast.show();
-
-                datasource.open();
-
-                List<Comment> comment = datasource.getAllComments();
-                //String commentstring = comment.get(1);
-
-
-
-                Log.e(">>>>", "commentstring " + comment);
-
-                datasource.close();
-                Visited(null);
+                Comment comment = (Comment) MainActivityLV.getItemAtPosition(position);
+                Log.e(">>>>", "message " + comment.getDate());
+                Visited(null, comment);
 
 
             }
@@ -194,7 +178,7 @@ public class MainActivity extends ListActivity {
         super.onPause();
     }
 
-    public void Visited(View view) {
+    public void Visited(View view, Comment comment) {
         Intent intent = new Intent(this, VisitedLocation.class);
         startActivity(intent);
         // todo - pobieranie lokcaji z bazy danych i wyswietlanie jej na mapie
