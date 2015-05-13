@@ -2,11 +2,12 @@ package com.s391377.travellog;
 
 public class Comment {
     private long id;
+    private String comment;
     private String latitude;
     private String longitude;
     private String date;
     private String time;
-    private String comment;
+
 
     public long getId() {
         return id;
@@ -59,6 +60,6 @@ public class Comment {
     // Will be used by the ArrayAdapter in the ListView
     @Override
     public String toString() {
-        return comment;
+        return comment + ";" + latitude + ";" + longitude  + ";" + date + ";" + time ;
     }
 }

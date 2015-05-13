@@ -33,15 +33,31 @@ public class MainActivity extends ListActivity {
 
         final ViewAnimator viewAnimator = (ViewAnimator) findViewById(R.id.viewAnimator1);
 
-        List<Comment> values = datasource.getAllComments();
+        final List<Comment> values = datasource.getAllComments();
+        String one = values.toString();
 
-                // use the SimpleCursorAdapter to show the
+
+
+
+        Log.e(">>>>", "commentstring " + values);
+
+        values.remove(0);
+
+        Log.e(">>>>", "commentstring " + values);
+
+        //List<Comment> values2 = datasource.getAllLatitudes();
+
+        //Log.e(">>>>", "commentstring " + values2);
+
+        // use the SimpleCursorAdapter to show the
         // elements in a ListView
         ArrayAdapter<Comment> adapter = new ArrayAdapter<Comment>(this,
                 android.R.layout.simple_expandable_list_item_1, values);
+
+
         setListAdapter(adapter);
 
-        ListView MainActivityLV = (ListView) findViewById(android.R.id.list);
+        final ListView MainActivityLV = (ListView) findViewById(android.R.id.list);
 
         DispayContent(viewAnimator);
 
@@ -50,7 +66,7 @@ public class MainActivity extends ListActivity {
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
                                            final int pos, long id) {
 
-                AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(arg0.getContext());
+                AlertDialog.Builder dlgAlert = new AlertDialog.Builder(arg0.getContext());
                 dlgAlert.setMessage("Do you want to delete selected location?");
                 dlgAlert.setTitle("Delete entry");
                 dlgAlert.setPositiveButton("Ok",
@@ -87,8 +103,23 @@ public class MainActivity extends ListActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast temp_toast = Toast.makeText(getApplicationContext(), "You were here", Toast.LENGTH_SHORT);
+
+                String selectedFromList =(MainActivityLV.getItemAtPosition(position).toString());
+
+                Log.e(">>>>", "selectedFromList " + selectedFromList);
+
                 temp_toast.show();
 
+                datasource.open();
+
+                List<Comment> comment = datasource.getAllComments();
+                //String commentstring = comment.get(1);
+
+
+
+                Log.e(">>>>", "commentstring " + comment);
+
+                datasource.close();
                 Visited(null);
 
 
