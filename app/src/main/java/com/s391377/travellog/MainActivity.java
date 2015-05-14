@@ -1,6 +1,8 @@
 package com.s391377.travellog;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -8,19 +10,21 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewAnimator;
 
 
 public class MainActivity extends ListActivity {
     private CommentsDataSource datasource;
-    public String _message = "placeholder";
+    public static Comment addedComment;
     private static final int ACTIVITY_CREATE=0;
 
     @Override
@@ -53,7 +57,7 @@ public class MainActivity extends ListActivity {
         setListAdapter(commentsAdapter);
 
 
-        values.get(1).getDate();
+        //values.get(1).getDate();
 
         final ListView MainActivityLV = (ListView) findViewById(android.R.id.list);
 
@@ -63,6 +67,11 @@ public class MainActivity extends ListActivity {
 
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
                                            final int pos, long id) {
+
+                //Toast temp_toast = Toast.makeText(getApplicationContext(), "Entry removed", Toast.LENGTH_SHORT);
+                //temp_toast.show();
+
+
 
                 AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(arg0.getContext());
                 dlgAlert.setMessage("Do you want to delete selected location?");
@@ -103,8 +112,19 @@ public class MainActivity extends ListActivity {
                 Toast temp_toast = Toast.makeText(getApplicationContext(), "You were here", Toast.LENGTH_SHORT);
                 temp_toast.show();
                 Comment comment = (Comment) MainActivityLV.getItemAtPosition(position);
-                Log.e(">>>>", "message " + comment.getDate());
-                Visited(null, comment);
+
+
+                Intent intent = new Intent();
+                Bundle bundle = new Bundle();
+
+                bundle.putString("COMMENT", comment.getComment());
+                bundle.putString("LATITUDE", comment.getLatitude());
+                bundle.putString("LONGITUDE", comment.getLongitude());
+                bundle.putString("DATE", comment.getDate());
+                bundle.putString("TIME", comment.getTime());
+
+
+                Visited(null, bundle);
 
 
             }
@@ -128,15 +148,20 @@ public class MainActivity extends ListActivity {
 
 
 
-    public void addNew(View view) {
+    public void addNew(View view, Comment comment) {
         @SuppressWarnings("unchecked")
         ArrayAdapter<Comment> adapter = (ArrayAdapter<Comment>) getListAdapter();
-        Comment comment = null;
-        String[] comments = new String[] { "Cool", _message, "Hate it" };
-        int nextInt = new Random().nextInt(3);
+        //Comment comment = null;
+        //String[] comments = new String[] { "Cool", _message, "Hate it" };
+        //int nextInt = new Random().nextInt(3);
         // save the new comment to the database
         datasource.open();
-        comment = datasource.createComment(comments[nextInt] , "test1", "test2", "test3", "test4");
+        comment = datasource.createComment(
+                comment.getComment(),
+                comment.getLatitude(),
+                comment.getLongitude(),
+                comment.getDate(),
+                comment.getTime());
         datasource.close();
         adapter.add(comment);
         adapter.notifyDataSetChanged();
@@ -151,15 +176,18 @@ public class MainActivity extends ListActivity {
         @SuppressWarnings("unchecked")
         ArrayAdapter<Comment> adapter = (ArrayAdapter<Comment>) getListAdapter();
         Comment comment = null;
-        if (getListAdapter().getCount() > 0) {
-            comment = (Comment) getListAdapter().getItem(0);
-            datasource.open();
-            datasource.deleteComment(comment);
-            datasource.close();
-            adapter.remove(comment);
-        }
-        adapter.notifyDataSetChanged();
+        int i = getListAdapter().getCount();
+        datasource.open();
+        if (i > 0) {
+            for (int j = 0; j < i; j++){
+                comment = (Comment) getListAdapter().getItem(0);
+                datasource.deleteComment(comment);
+                adapter.remove(comment);
+            }
 
+        }
+        datasource.close();
+        adapter.notifyDataSetChanged();
 
         final ViewAnimator viewAnimator = (ViewAnimator) findViewById(R.id.viewAnimator1);
         DispayContent(viewAnimator);
@@ -178,10 +206,10 @@ public class MainActivity extends ListActivity {
         super.onPause();
     }
 
-    public void Visited(View view, Comment comment) {
+    public void Visited(View view, Bundle bundle) {
         Intent intent = new Intent(this, VisitedLocation.class);
+        intent.putExtras(bundle);
         startActivity(intent);
-        // todo - pobieranie lokcaji z bazy danych i wyswietlanie jej na mapie
     }
 
     public void AddLocation(View view) {
@@ -193,15 +221,13 @@ public class MainActivity extends ListActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == ACTIVITY_CREATE) {
             if(resultCode == RESULT_OK) {
-                _message = "testme";
-                String message = data.getStringExtra(CurrentLocation.EXTRA_MESSAGE);
-                //mTextView.setText(myStr);
-                //Log.e(">>>>", "message " + message);
-                _message = message;
-                addNew(null);
+
+                Comment comment = addedComment;
+                addNew(null, comment);
 
             }
         }
 
     }
+
 }

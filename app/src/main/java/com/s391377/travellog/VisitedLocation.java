@@ -1,8 +1,11 @@
 package com.s391377.travellog;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -60,6 +63,23 @@ public class VisitedLocation extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        String comment = bundle.getString("COMMENT");
+        Double latitude = Double.parseDouble(bundle.getString("LATITUDE"));
+        Double longitude = Double.parseDouble(bundle.getString("LONGITUDE"));
+        String date = bundle.getString("DATE");
+        String time = bundle.getString("TIME");
+        Log.e(">>>>", "message " + latitude);
+
+
+        // Create a LatLng object for the current location
+        LatLng latLng = new LatLng(latitude, longitude);
+
+        // Show the current location in Google Map
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(14));
+        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(date + " " + time).snippet(comment));
     }
 }

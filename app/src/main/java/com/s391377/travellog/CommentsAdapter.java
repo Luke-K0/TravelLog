@@ -2,6 +2,7 @@ package com.s391377.travellog;
 
 
 import android.content.Context;
+import android.location.Location;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,19 +24,72 @@ public class CommentsAdapter extends ArrayAdapter<Comment> {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_comment, parent, false);
         }
+        Double lat = Double.parseDouble(comment.getLatitude());
+        Double lon = Double.parseDouble(comment.getLongitude());
+        String LatLon[] = latlong(lat, lon);
         // Lookup view for data population
-        // TextView tvComment = (TextView) convertView.findViewById(R.id.tvComment);
         TextView tvLatitude = (TextView) convertView.findViewById(R.id.tvLatitude);
         TextView tvLongitude = (TextView) convertView.findViewById(R.id.tvLongitude);
         TextView tvDate = (TextView) convertView.findViewById(R.id.tvDate);
         TextView tvTime = (TextView) convertView.findViewById(R.id.tvTime);
         // Populate the data into the template view using the data object
-        // tvComment.setText(comment.getComment());
-        tvLatitude.setText(comment.getLatitude());
-        tvLongitude.setText(comment.getLongitude());
+        //tvLatitude.setText(comment.getLatitude());
+        //tvLongitude.setText(comment.getLongitude());
+        tvLatitude.setText(LatLon[0]);
+        tvLongitude.setText(LatLon[1]);
         tvDate.setText(comment.getDate());
         tvTime.setText(comment.getTime());
         // Return the completed view to render on screen
         return convertView;
+    }
+
+    public String[] latlong(double lat, double lon) {
+
+
+        String LatLetter, LongLetter;
+
+        if (lat > 0)
+        {
+            LatLetter = "N";
+        }
+        else
+        {
+            LatLetter = "S";
+        }
+
+        if (lon > 0)
+        {
+            LongLetter = "E";
+        }
+        else
+        {
+            LongLetter = "W";
+        }
+
+        String Lat = Location.convert(lat, Location.FORMAT_SECONDS);
+        String Long = Location.convert(lon, Location.FORMAT_SECONDS);
+
+        String[] LatParts = Lat.split(":");
+        String LatPart1 = LatParts[0];
+        String LatPart2 = LatParts[1];
+        String LatPart3 = LatParts[2];
+        String[] LatParts3 = LatPart3.split(",");
+        LatPart3 = LatParts3[0];
+
+        String[] LongParts = Long.split(":");
+        String LongPart1 = LongParts[0];
+        String LongPart2 = LongParts[1];
+        String LongPart3 = LongParts[2];
+        String[] LongParts3 = LongPart3.split(",");
+        LongPart3 = LongParts3[0];
+
+        String latitude = LatPart1 + "\u00B0" + LatPart2 + "\'" + LatPart3 + "\"" + LatLetter;
+        String longitude = LongPart1 + "\u00B0" + LongPart2 + "\'" + LongPart3 + "\"" + LongLetter;
+
+        String LatLon[] = new String[2];
+        LatLon[0] = latitude;
+        LatLon[1] = longitude;
+
+        return LatLon;
     }
 }

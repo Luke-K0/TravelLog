@@ -6,9 +6,12 @@ import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Parcelable;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -23,6 +26,7 @@ import java.util.Date;
 public class CurrentLocation extends FragmentActivity {
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     public final static String EXTRA_MESSAGE = "com.s391377.travellog.MESSAGE";
+    public String SComment, SLatitude, SLongitude, SDate, STime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,8 +79,8 @@ public class CurrentLocation extends FragmentActivity {
         mMap.animateCamera(CameraUpdateFactory.zoomTo(14));
         mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("You are here!").snippet("Consider yourself located"));
 
-        String currentDateString = DateFormat.getDateInstance().format(new Date());
-        String currentTimeString = DateFormat.getTimeInstance().format(new Date());
+        String currentDateString = SDate = DateFormat.getDateInstance().format(new Date());
+        String currentTimeString = STime = DateFormat.getTimeInstance().format(new Date());
 
         String LatLetter, LongLetter;
 
@@ -98,6 +102,9 @@ public class CurrentLocation extends FragmentActivity {
             LongLetter = "W";
         }
 
+
+        SLatitude = Double.toString(latitude);
+        SLongitude = Double.toString(longitude);
 
         String Lat = Location.convert(latitude, Location.FORMAT_SECONDS);
         String Long = Location.convert(longitude, Location.FORMAT_SECONDS);
@@ -162,9 +169,23 @@ public class CurrentLocation extends FragmentActivity {
 
 
     public void addvisited(View view) {
-        String message = "location";
+        //String message = "location";
+
+
+
+        EditText editText = (EditText) findViewById(R.id.edit_message);
+        String message = editText.getText().toString();
+
+        Comment comment = new Comment();
+        comment.setComment(message);
+        comment.setLatitude(SLatitude);
+        comment.setLongitude(SLongitude);
+        comment.setDate(SDate);
+        comment.setTime(STime);
+
         Intent intent = new Intent();
-        intent.putExtra(EXTRA_MESSAGE, message);
+        MainActivity.addedComment = comment;
+
         setResult(CurrentLocation.RESULT_OK, intent);
         finish();
     }
