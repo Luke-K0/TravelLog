@@ -1,7 +1,5 @@
 package com.s391377.travellog;
 
-import java.io.Serializable;
-
 public class Comment{
     private long id;
     private String comment;

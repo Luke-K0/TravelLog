@@ -27,44 +27,24 @@ public class CommentsAdapter extends ArrayAdapter<Comment> {
         Double lat = Double.parseDouble(comment.getLatitude());
         Double lon = Double.parseDouble(comment.getLongitude());
         String LatLon[] = latlong(lat, lon);
-        // Lookup view for data population
         TextView tvLatitude = (TextView) convertView.findViewById(R.id.tvLatitude);
         TextView tvLongitude = (TextView) convertView.findViewById(R.id.tvLongitude);
         TextView tvDate = (TextView) convertView.findViewById(R.id.tvDate);
         TextView tvTime = (TextView) convertView.findViewById(R.id.tvTime);
-        // Populate the data into the template view using the data object
-        //tvLatitude.setText(comment.getLatitude());
-        //tvLongitude.setText(comment.getLongitude());
         tvLatitude.setText(LatLon[0]);
         tvLongitude.setText(LatLon[1]);
         tvDate.setText(comment.getDate());
         tvTime.setText(comment.getTime());
-        // Return the completed view to render on screen
+
         return convertView;
     }
 
     public String[] latlong(double lat, double lon) {
 
-
         String LatLetter, LongLetter;
 
-        if (lat > 0)
-        {
-            LatLetter = "N";
-        }
-        else
-        {
-            LatLetter = "S";
-        }
-
-        if (lon > 0)
-        {
-            LongLetter = "E";
-        }
-        else
-        {
-            LongLetter = "W";
-        }
+        LatLetter = lat > 0 ? "N" : "S";
+        LongLetter = lon > 0 ? "E" : "W";
 
         String Lat = Location.convert(lat, Location.FORMAT_SECONDS);
         String Long = Location.convert(lon, Location.FORMAT_SECONDS);

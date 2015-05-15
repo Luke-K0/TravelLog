@@ -1,15 +1,12 @@
 package com.s391377.travellog;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Parcelable;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -24,9 +21,8 @@ import java.text.DateFormat;
 import java.util.Date;
 
 public class CurrentLocation extends FragmentActivity {
+    public String SLatitude, SLongitude, SDate, STime;
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-    public final static String EXTRA_MESSAGE = "com.s391377.travellog.MESSAGE";
-    public String SComment, SLatitude, SLongitude, SDate, STime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,13 +48,8 @@ public class CurrentLocation extends FragmentActivity {
         // Create a criteria object to retrieve provider
         Criteria criteria = new Criteria();
 
-        // Get the name of the best provider
-        //String provider = locationManager.getBestProvider(criteria, true);
-
-        String provider2 = locationManager.NETWORK_PROVIDER;
-
         // Get Current Location
-        Location myLocation = locationManager.getLastKnownLocation(provider2);
+        Location myLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
         // set map type
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -84,24 +75,8 @@ public class CurrentLocation extends FragmentActivity {
 
         String LatLetter, LongLetter;
 
-        if (latitude > 0)
-        {
-            LatLetter = "N";
-        }
-        else
-        {
-            LatLetter = "S";
-        }
-
-        if (longitude > 0)
-        {
-            LongLetter = "E";
-        }
-        else
-        {
-            LongLetter = "W";
-        }
-
+        LatLetter = latitude > 0 ? "N" : "S";
+        LongLetter = longitude > 0 ? "E" : "W";
 
         SLatitude = Double.toString(latitude);
         SLongitude = Double.toString(longitude);
@@ -139,21 +114,6 @@ public class CurrentLocation extends FragmentActivity {
         setUpMapIfNeeded();
     }
 
-    /**
-     * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
-     * installed) and the map has not already been instantiated.. This will ensure that we only ever
-     * call {@link #setUpMap()} once when {@link #mMap} is not null.
-     * <p/>
-     * If it isn't installed {@link SupportMapFragment} (and
-     * {@link com.google.android.gms.maps.MapView MapView}) will show a prompt for the user to
-     * install/update the Google Play services APK on their device.
-     * <p/>
-     * A user can return to this FragmentActivity after following the prompt and correctly
-     * installing/updating/enabling the Google Play services. Since the FragmentActivity may not
-     * have been completely destroyed during this process (it is likely that it would only be
-     * stopped or paused), {@link #onCreate(Bundle)} may not be called again so we should call this
-     * method in {@link #onResume()} to guarantee that it will be called.
-     */
     private void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
@@ -167,39 +127,22 @@ public class CurrentLocation extends FragmentActivity {
         }
     }
 
-
     public void addvisited(View view) {
-        //String message = "location";
-
-
 
         EditText editText = (EditText) findViewById(R.id.edit_message);
         String message = editText.getText().toString();
 
-        Comment comment = new Comment();
-        comment.setComment(message);
-        comment.setLatitude(SLatitude);
-        comment.setLongitude(SLongitude);
-        comment.setDate(SDate);
-        comment.setTime(STime);
-
         Intent intent = new Intent();
-        MainActivity.addedComment = comment;
+        intent.putExtra("message", message);
+        intent.putExtra("long", SLongitude);
+        intent.putExtra("lat", SLatitude);
+        intent.putExtra("date", SDate);
+        intent.putExtra("time", STime);
 
         setResult(CurrentLocation.RESULT_OK, intent);
+
         finish();
     }
-
-    /**
-     * This is where we can add markers or lines, add listeners or move the camera. In this case, we
-     * just add a marker near Africa.
-     * <p/>
-     * This should only be called once and when we are sure that {@link #mMap} is not null.
-     */
-    //private void setUpMap() {
-    //    mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
-    //}
-
 
 
 }

@@ -1,31 +1,24 @@
 package com.s391377.travellog;
 
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
-
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewAnimator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class MainActivity extends ListActivity {
-    private CommentsDataSource datasource;
-    public static Comment addedComment;
     private static final int ACTIVITY_CREATE=0;
+    private CommentsDataSource datasource;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,25 +32,13 @@ public class MainActivity extends ListActivity {
         final ViewAnimator viewAnimator = (ViewAnimator) findViewById(R.id.viewAnimator1);
 
         List<Comment> values = datasource.getAllComments();
-        // use the SimpleCursorAdapter to show the
-        // elements in a ListView
-        ArrayAdapter<Comment> adapter = new ArrayAdapter<Comment>(this,
-                android.R.layout.simple_expandable_list_item_1, values);
-        //setListAdapter(adapter);
-
-
-
 
         // Construct the data source
-        ArrayList<Comment> arrayOfComments = new ArrayList<Comment>(values);
+        ArrayList<Comment> arrayOfComments = new ArrayList<>(values);
         // Create the adapter to convert the array to views
         CommentsAdapter commentsAdapter = new CommentsAdapter(this, arrayOfComments);
         // Attach the adapter to a ListView
-        //ListView listView = (ListView) findViewById(R.id.lvItems);
         setListAdapter(commentsAdapter);
-
-
-        //values.get(1).getDate();
 
         final ListView MainActivityLV = (ListView) findViewById(android.R.id.list);
 
@@ -65,13 +46,7 @@ public class MainActivity extends ListActivity {
 
         MainActivityLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
-            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-                                           final int pos, long id) {
-
-                //Toast temp_toast = Toast.makeText(getApplicationContext(), "Entry removed", Toast.LENGTH_SHORT);
-                //temp_toast.show();
-
-
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1, final int pos, long id) {
 
                 AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(arg0.getContext());
                 dlgAlert.setMessage("Do you want to delete selected location?");
@@ -83,7 +58,7 @@ public class MainActivity extends ListActivity {
                                 komunikat.show();
 
                                 ArrayAdapter<Comment> adapter = (ArrayAdapter<Comment>) getListAdapter();
-                                Comment comment = null;
+                                Comment comment;
                                 if (getListAdapter().getCount() > 0) {
                                     comment = (Comment) getListAdapter().getItem(pos);
                                     datasource.open();
@@ -109,12 +84,11 @@ public class MainActivity extends ListActivity {
         MainActivityLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast temp_toast = Toast.makeText(getApplicationContext(), "You were here", Toast.LENGTH_SHORT);
-                temp_toast.show();
+                Toast visited = Toast.makeText(getApplicationContext(), "You were here", Toast.LENGTH_SHORT);
+                visited.show();
                 Comment comment = (Comment) MainActivityLV.getItemAtPosition(position);
 
-
-                Intent intent = new Intent();
+                //Intent intent = new Intent();
                 Bundle bundle = new Bundle();
 
                 bundle.putString("COMMENT", comment.getComment());
@@ -123,10 +97,7 @@ public class MainActivity extends ListActivity {
                 bundle.putString("DATE", comment.getDate());
                 bundle.putString("TIME", comment.getTime());
 
-
                 Visited(null, bundle);
-
-
             }
         });
 
@@ -143,17 +114,9 @@ public class MainActivity extends ListActivity {
         }
     }
 
-    // Will be called via the onClick attribute
-    // of the buttons in main.xml
-
-
-
-    public void addNew(View view, Comment comment) {
+    public void addNew(Comment comment) {
         @SuppressWarnings("unchecked")
         ArrayAdapter<Comment> adapter = (ArrayAdapter<Comment>) getListAdapter();
-        //Comment comment = null;
-        //String[] comments = new String[] { "Cool", _message, "Hate it" };
-        //int nextInt = new Random().nextInt(3);
         // save the new comment to the database
         datasource.open();
         comment = datasource.createComment(
@@ -166,7 +129,6 @@ public class MainActivity extends ListActivity {
         adapter.add(comment);
         adapter.notifyDataSetChanged();
 
-
         final ViewAnimator viewAnimator = (ViewAnimator) findViewById(R.id.viewAnimator1);
         DispayContent(viewAnimator);
 
@@ -175,7 +137,7 @@ public class MainActivity extends ListActivity {
     public void removeOld(View view) {
         @SuppressWarnings("unchecked")
         ArrayAdapter<Comment> adapter = (ArrayAdapter<Comment>) getListAdapter();
-        Comment comment = null;
+        Comment comment;
         int i = getListAdapter().getCount();
         datasource.open();
         if (i > 0) {
@@ -184,7 +146,6 @@ public class MainActivity extends ListActivity {
                 datasource.deleteComment(comment);
                 adapter.remove(comment);
             }
-
         }
         datasource.close();
         adapter.notifyDataSetChanged();
@@ -196,13 +157,11 @@ public class MainActivity extends ListActivity {
 
     @Override
     protected void onResume() {
-        // datasource.open();
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        // datasource.close();
         super.onPause();
     }
 
@@ -222,9 +181,14 @@ public class MainActivity extends ListActivity {
         if (requestCode == ACTIVITY_CREATE) {
             if(resultCode == RESULT_OK) {
 
-                Comment comment = addedComment;
-                addNew(null, comment);
+                Comment comment = new Comment();
+                comment.setComment(data.getStringExtra("message"));
+                comment.setLatitude(data.getStringExtra("lat"));
+                comment.setLongitude(data.getStringExtra("long"));
+                comment.setDate(data.getStringExtra("date"));
+                comment.setTime(data.getStringExtra("time"));
 
+                addNew(comment);
             }
         }
 
