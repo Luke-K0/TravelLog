@@ -11,8 +11,8 @@
         android:gravity="center_horizontal" />
 
     <fragment
-        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="5"
@@ -47,11 +47,13 @@
             android:gravity="center_horizontal"/>
 
         <Button
+            style="@style/button_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/button_add"
-            android:onClick="addvisited"/>
+            android:background="@drawable/green_button"
+            android:onClick="addvisited"
+            android:text="@string/button_add" />
 
     </LinearLayout>
 

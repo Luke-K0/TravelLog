@@ -97,7 +97,7 @@ public class MainActivity extends ListActivity {
                 bundle.putString("DATE", comment.getDate());
                 bundle.putString("TIME", comment.getTime());
 
-                Visited(null, bundle);
+                Visited(bundle);
             }
         });
 
@@ -165,7 +165,7 @@ public class MainActivity extends ListActivity {
         super.onPause();
     }
 
-    public void Visited(View view, Bundle bundle) {
+    public void Visited(Bundle bundle) {
         Intent intent = new Intent(this, VisitedLocation.class);
         intent.putExtras(bundle);
         startActivity(intent);

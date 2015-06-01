@@ -2,7 +2,6 @@ package com.s391377.travellog;
 
 import android.content.Context;
 import android.content.Intent;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -21,7 +20,7 @@ import java.text.DateFormat;
 import java.util.Date;
 
 public class CurrentLocation extends FragmentActivity {
-    public String SLatitude, SLongitude, SDate, STime;
+    public String mLatitude, mLongitude, mDate, mTime;
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
 
     @Override
@@ -45,9 +44,6 @@ public class CurrentLocation extends FragmentActivity {
         // Get LocationManager object from System Service LOCATION_SERVICE
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        // Create a criteria object to retrieve provider
-        Criteria criteria = new Criteria();
-
         // Get Current Location
         Location myLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
@@ -70,16 +66,16 @@ public class CurrentLocation extends FragmentActivity {
         mMap.animateCamera(CameraUpdateFactory.zoomTo(14));
         mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("You are here!").snippet("Consider yourself located"));
 
-        String currentDateString = SDate = DateFormat.getDateInstance().format(new Date());
-        String currentTimeString = STime = DateFormat.getTimeInstance().format(new Date());
+        mDate = DateFormat.getDateInstance().format(new Date());
+        mTime = DateFormat.getTimeInstance().format(new Date());
 
         String LatLetter, LongLetter;
 
         LatLetter = latitude > 0 ? "N" : "S";
         LongLetter = longitude > 0 ? "E" : "W";
 
-        SLatitude = Double.toString(latitude);
-        SLongitude = Double.toString(longitude);
+        mLatitude = Double.toString(latitude);
+        mLongitude = Double.toString(longitude);
 
         String Lat = Location.convert(latitude, Location.FORMAT_SECONDS);
         String Long = Location.convert(longitude, Location.FORMAT_SECONDS);
@@ -99,9 +95,9 @@ public class CurrentLocation extends FragmentActivity {
         LongPart3 = LongParts3[0];
 
         TextView date = (TextView)findViewById(R.id.date);
-        date.setText(currentDateString);
+        date.setText(mDate);
         TextView time = (TextView)findViewById(R.id.time);
-        time.setText(currentTimeString);
+        time.setText(mTime);
 
         TextView coords = (TextView)findViewById(R.id.coordinates);
         coords.setText("Latitude: " + LatPart1 + "\u00B0" + LatPart2 + "\'" + LatPart3 + "\"" + LatLetter + "\n" + "Longitude: " + LongPart1 + "\u00B0" + LongPart2 + "\'" + LongPart3 + "\"" + LongLetter);
@@ -134,10 +130,10 @@ public class CurrentLocation extends FragmentActivity {
 
         Intent intent = new Intent();
         intent.putExtra("message", message);
-        intent.putExtra("long", SLongitude);
-        intent.putExtra("lat", SLatitude);
-        intent.putExtra("date", SDate);
-        intent.putExtra("time", STime);
+        intent.putExtra("long", mLongitude);
+        intent.putExtra("lat", mLatitude);
+        intent.putExtra("date", mDate);
+        intent.putExtra("time", mTime);
 
         setResult(CurrentLocation.RESULT_OK, intent);
 
